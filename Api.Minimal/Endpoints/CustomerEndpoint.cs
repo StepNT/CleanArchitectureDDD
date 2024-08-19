@@ -4,6 +4,7 @@ using Application.Customer.Delete;
 using Application.Customer.GetById;
 using Application.Customer.Inquiry;
 using Application.Customer.Update;
+using Domain.Enums;
 
 namespace Api.Minimal.Endpoints;
 
@@ -13,18 +14,20 @@ public class CustomerEndpoint : CarterModule
         : base("customer")
     {
         WithTags("Customer");
+        RequireAuthorization(Policy.AUTH);
     }
 
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost(
-            "/Create",
-            async (ISender sender, CustomerCreateCommand req, CancellationToken token) =>
-            {
-                var result = await sender.Send(req, token);
-                return result;
-            }
-        );
+                "/Create",
+                async (ISender sender, CustomerCreateCommand req, CancellationToken token) =>
+                {
+                    var result = await sender.Send(req, token);
+                    return result;
+                }
+            )
+            .RequireAuthorization(Policy.ADMIN);
 
         app.MapPut(
             "/Update",
